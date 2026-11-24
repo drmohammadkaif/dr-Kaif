@@ -1,0 +1,17 @@
+{
+  // Dr. Kaif: one Cloudflare Worker that serves the app and the sync API.
+  // The D1 database below is created automatically the first time you deploy. You do not need to do anything.
+  "name": "dr-kaif",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "dr-kaif-db" }
+  ],
+  "observability": { "enabled": true }
+}

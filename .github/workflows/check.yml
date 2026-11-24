@@ -1,0 +1,24 @@
+# Free GitHub Actions check: runs on every push so a broken change is caught early.
+name: Check
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Worker tests
+        run: node --test tests/worker.test.mjs
+      - name: App script is valid JavaScript
+        run: |
+          node -e "
+          const fs=require('fs');
+          const html=fs.readFileSync('public/index.html','utf8');
+          const m=html.match(/<script>([\s\S]*)<\/script>/);
+          if(!m) throw new Error('script not found');
+          new (require('vm').Script)(m[1]);
+          JSON.parse(fs.readFileSync('public/manifest.webmanifest','utf8'));
+          console.log('OK');
+          "
